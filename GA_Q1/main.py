@@ -24,23 +24,55 @@ class ga_q1(Scene):
         self.play(eq.animate.scale(0.5).to_corner(UL),run_time=1)
         self.wait(0.5)
 
+        box = SurroundingRectangle(eq,color=YELLOW,buff =0.2)
+        self.play(Create(box)) 
+
+        
         # Add example animation
           
-        eg = Text('X = 1 & Y = 2')
-        eg.set_color_by_text_to_color_map({'1': YELLOW, '2': YELLOW})
-        eg.shift(UP)
+        eg = MathTex(
+            r"\text{Let's take, }",
+            r"X = ",
+            r"1",
+            r"\text{ and } Y = ",
+            r"2",
+            font_size=34)
+
+# Now eg has parts split as:
+# 0: "Let's take, "
+# 1: "X = "
+# 2: "1"
+# 3: " and Y = "
+# 4: "2"
+
+        eg[2].set_color(RED)
+        eg[4].set_color(RED)
+                
         self.add(eg)
+        self.wait(0.2)
+
+        self.play(eg.animate.shift(UP*1))
+        self.wait(0.2)
+        
 
         # Create the MathTex formula
-        sol = MathTex(r"f_{XY}(0,0) = \frac{1}{36}(3 \cdot 1 + 2)")
+        sol = MathTex(r"f_{XY}(0,0) = \frac{1}{36}(3 \cdot 1 + 2)",font_size=30)
         sol.next_to(eg, DOWN * 1.5, buff=0.2)
         self.add(sol)
+        self.wait(0.1)
 
         # Calculate and display value
         val = (1/36) * (3 * 1 + 2)  # = 5/36
-        val_text = Text(f"{val:.2f}")
-        val_text.next_to(sol, DOWN * 0.7 + RIGHT * 2, buff=0.2)
-        self.add(val_text)
+        val_text = MathTex(f"= {val:.2f}",font_size=30)
+        val_text.next_to(sol,DOWN, buff=0.2)
+        self.play(Create(val_text))
+        self.wait(0.5)
+
+        gr = VGroup(eg,sol,val_text)
+
+        self.play(gr.animate.to_edge(LEFT,buff=0.5))
+        self.wait(0.1)
+
 
         #create a 3x3 grid
 
@@ -63,7 +95,8 @@ class ga_q1(Scene):
                 texts.add(label)
 
         #centre grid 
-        squares.move_to(ORIGIN)   
+        squares.move_to(ORIGIN)
+        
         self.play(LaggedStartMap(Create,squares), run_time = 3)   
 
         x_labels = VGroup()
@@ -96,5 +129,8 @@ class ga_q1(Scene):
         texts.move_to(ORIGIN)
         for text in texts:
             self.play(Create(text), run_time=0.3)
+
+        gro = VGroup(squares,x_labels,y_labels,x_title,y_title,texts,diag_line)  
+        self.play(gro.animate.scale(1.5).shift(RIGHT*3)) 
         self.wait(5)
         
